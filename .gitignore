@@ -1,0 +1,9 @@
+.DS_Store
+output/
+server.js
+generate.js
+.claude/
+node_modules/
+*.pptx
+*.pdf
+slide-*.jpg
