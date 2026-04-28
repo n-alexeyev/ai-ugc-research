@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI UGC — Static Creative Research</title>
+<style>
+/* ── Variables ─────────────────────────────────────────────────────────────── */
+:root {
+  --bg-dark:   #0D0F1A;
+  --bg-light:  #F4F5F8;
+  --primary:   #5B4FF5;
+  --secondary: #00C2A8;
+  --warning:   #F5A623;
+  --white:     #FFFFFF;
+  --text-dark: #1A1B2E;
+  --text-muted:#8A8FA8;
+  --card-bg:   #FFFFFF;
+  --card-border:#E2E5F0;
+  --radius:    14px;
+  --radius-sm: 8px;
+}
+html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-dark); color: var(--white); line-height: 1.6;
+  margin: 0; padding: 0;
+}
+
+/* ── Navigation ─────────────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 60px; display: flex; align-items: center;
+  padding: 0 40px; gap: 32px;
+  background: rgba(13,15,26,.85); backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.nav-logo { font-weight: 800; font-size: .95rem; color: var(--white); white-space: nowrap; }
+.nav-links { display: flex; gap: 24px; flex: 1; }
+.nav-links a {
+  color: var(--text-muted); text-decoration: none; font-size: .85rem;
+  font-weight: 600; transition: color .2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-pages { display: flex; gap: 6px; margin-left: 8px; }
+.nav-page-btn {
+  padding: 5px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700;
+  color: var(--text-muted); border: 1px solid rgba(255,255,255,.12);
+  text-decoration: none; transition: all .2s;
+}
+.nav-page-btn:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+.nav-page-btn--active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.nav-progress {
+  position: fixed; top: 60px; left: 0; height: 2px;
+  background: var(--primary); z-index: 101; width: 0%; transition: width .1s;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+.container { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+.section { padding: 100px 0; }
+.section--dark  { background: var(--bg-dark); }
+.section--light { background: var(--bg-light); }
+
+/* ── Hero ───────────────────────────────────────────────────────────────────── */
+#hero {
+  min-height: 52vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  background: var(--bg-dark); padding: 120px 40px 80px;
+}
+.hero-badge {
+  font-size: .75rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--primary);
+  border: 1px solid rgba(91,79,245,.3); padding: 5px 16px;
+  border-radius: 20px; margin-bottom: 28px; display: inline-block;
+}
+.hero-title {
+  font-size: clamp(2.6rem, 5.5vw, 4rem); font-weight: 900; line-height: 1.08;
+  margin: 0 0 20px; color: var(--white);
+}
+.hero-title span { color: var(--secondary); }
+.hero-sub {
+  font-size: 1.1rem; color: var(--text-muted); max-width: 560px;
+  margin: 0 auto 36px;
+}
+.hero-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.hero-tag {
+  font-size: .78rem; font-weight: 700; padding: 5px 14px;
+  border-radius: 20px; background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1); color: var(--text-muted);
+}
+
+/* ── Section headers ─────────────────────────────────────────────────────────── */
+.section-label {
+  font-size: .72rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.section--dark  .section-label { color: var(--primary); }
+.section--light .section-label { color: var(--primary); }
+h2 {
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem); font-weight: 800;
+  margin: 0 0 10px;
+}
+.section--dark  h2 { color: var(--white); }
+.section--light h2 { color: var(--text-dark); }
+.section-intro {
+  font-size: 1rem; line-height: 1.75; max-width: 780px;
+  margin-bottom: 48px;
+}
+.section--dark  .section-intro { color: rgba(255,255,255,.7); }
+.section--light .section-intro { color: #4A4D65; }
+
+/* ── Prompt block ────────────────────────────────────────────────────────────── */
+.prompt-block {
+  background: #1A1B2E; border: 1px solid rgba(91,79,245,.3);
+  border-radius: var(--radius); padding: 24px 28px; margin-bottom: 36px;
+}
+.prompt-label {
+  font-size: .7rem; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 12px;
+}
+.prompt-text {
+  font-family: 'Consolas', 'Menlo', monospace; font-size: .85rem;
+  line-height: 1.8; color: var(--secondary); white-space: pre-wrap;
+}
+
+/* ── Image grid ──────────────────────────────────────────────────────────────── */
+.img-grid {
+  display: grid; gap: 16px;
+}
+.img-grid--7 { grid-template-columns: repeat(7, 1fr); }
+.img-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.img-grid--4 { grid-template-columns: repeat(4, 1fr); }
+
+.img-card { display: flex; flex-direction: column; }
+.img-wrap {
+  position: relative; border-radius: var(--radius-sm); overflow: hidden;
+  aspect-ratio: 4/5;
+  border: 1.5px solid rgba(255,255,255,.09);
+  background: #1A1B2E;
+}
+.img-wrap--winner-primary {
+  border: 2.5px solid var(--primary);
+  box-shadow: 0 0 18px rgba(91,79,245,.4);
+}
+.img-wrap--winner-secondary {
+  border: 2.5px solid var(--secondary);
+  box-shadow: 0 0 18px rgba(0,194,168,.35);
+}
+.img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; cursor: zoom-in;
+  transition: transform .25s ease;
+}
+.img-wrap img:hover { transform: scale(1.03); }
+.img-winner-badge {
+  position: absolute; top: 7px; left: 7px;
+  font-size: .6rem; font-weight: 800; letter-spacing: .05em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 20px;
+  pointer-events: none; z-index: 2;
+}
+.img-winner-badge--primary { background: var(--primary); color: #fff; }
+.img-winner-badge--secondary { background: var(--secondary); color: #0D0F1A; }
+.img-model-label {
+  font-size: .75rem; font-weight: 700; margin-top: 8px;
+  text-align: center; color: var(--text-muted);
+}
+.section--light .img-model-label { color: #6B6F88; }
+.img-model-label.winner { color: var(--primary); }
+.img-model-label.winner-2 { color: var(--secondary); }
+
+/* ── 9:16 (resize) grid ──────────────────────────────────────────────────────── */
+.resize-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.resize-card { display: flex; flex-direction: column; }
+.resize-wrap {
+  position: relative; border-radius: var(--radius-sm); overflow: hidden;
+  aspect-ratio: 9/16;
+  border: 1.5px solid rgba(255,255,255,.09);
+  background: #1A1B2E;
+}
+.resize-wrap--winner {
+  border: 2.5px solid var(--secondary);
+  box-shadow: 0 0 22px rgba(0,194,168,.4);
+}
+.resize-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; cursor: zoom-in;
+  transition: transform .25s ease;
+}
+.resize-wrap img:hover { transform: scale(1.03); }
+.resize-label {
+  font-size: .8rem; font-weight: 700; margin-top: 10px;
+  text-align: center; color: var(--text-muted);
+}
+.resize-label.winner { color: var(--secondary); }
+
+/* ── Test group separator ────────────────────────────────────────────────────── */
+.test-group { margin-bottom: 60px; }
+.test-group:last-child { margin-bottom: 0; }
+.test-group-title {
+  font-size: .8rem; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.section--light .test-group-title { color: #9396AD; }
+
+/* ── Verdict / callout box ───────────────────────────────────────────────────── */
+.verdict-box {
+  border-radius: var(--radius); padding: 22px 28px;
+  display: flex; gap: 16px; align-items: flex-start;
+  margin-top: 44px;
+}
+.verdict-box--primary { background: rgba(91,79,245,.12); border: 1px solid rgba(91,79,245,.28); }
+.verdict-box--secondary { background: rgba(0,194,168,.1); border: 1px solid rgba(0,194,168,.28); }
+.verdict-box--warning { background: rgba(245,166,35,.1); border: 1px solid rgba(245,166,35,.28); }
+.verdict-icon { font-size: 1.4rem; flex-shrink: 0; }
+.verdict-body strong { display: block; font-size: 1rem; font-weight: 800; margin-bottom: 4px; }
+.verdict-body p { font-size: .9rem; line-height: 1.65; margin: 0; }
+.section--dark .verdict-body strong { color: var(--white); }
+.section--dark .verdict-body p    { color: rgba(255,255,255,.7); }
+.section--light .verdict-body strong { color: var(--text-dark); }
+.section--light .verdict-body p    { color: #4A4D65; }
+
+/* ── Resize source row ───────────────────────────────────────────────────────── */
+.resize-source-row {
+  display: flex; gap: 20px; margin-bottom: 36px; align-items: flex-end;
+}
+.resize-source-img {
+  width: 140px; flex-shrink: 0;
+  border-radius: var(--radius-sm); overflow: hidden;
+  aspect-ratio: 4/5; border: 1.5px solid rgba(255,255,255,.1);
+}
+.resize-source-img img { width: 100%; height: 100%; object-fit: cover; }
+.resize-arrow { font-size: 2rem; color: var(--text-muted); align-self: center; }
+.resize-desc { font-size: .92rem; line-height: 1.7; color: rgba(255,255,255,.7); }
+.resize-desc strong { color: var(--white); }
+
+/* ── Divider ─────────────────────────────────────────────────────────────────── */
+.section-divider {
+  border: none; border-top: 1px solid rgba(255,255,255,.07);
+  margin: 52px 0;
+}
+.section--light .section-divider { border-color: var(--card-border); }
+
+/* ── Winner row ──────────────────────────────────────────────────────────────── */
+.winners-row {
+  display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px;
+}
+.winner-chip {
+  padding: 7px 18px; border-radius: 24px; font-size: .82rem; font-weight: 800;
+}
+.winner-chip--primary { background: var(--primary); color: #fff; }
+.winner-chip--secondary { background: var(--secondary); color: #0D0F1A; }
+.winner-chip--warning { background: rgba(245,166,35,.15); border: 1px solid var(--warning); color: var(--warning); }
+
+/* ── Fade-up animation ───────────────────────────────────────────────────────── */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease; }
+.fade-up.visible { opacity: 1; transform: none; }
+.d1 { transition-delay: .05s; } .d2 { transition-delay: .12s; } .d3 { transition-delay: .19s; }
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+footer {
+  background: #080A12; padding: 40px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  text-align: center; color: var(--text-muted); font-size: .82rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .img-grid--7 { grid-template-columns: repeat(4, 1fr); }
+  .img-grid--3, .resize-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  nav { padding: 0 16px; gap: 16px; }
+  .nav-links { display: none; }
+  .container { padding: 0 20px; }
+  .section { padding: 60px 0; }
+  .img-grid--7 { grid-template-columns: repeat(2, 1fr); }
+  .img-grid--3, .resize-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">AI UGC Research</div>
+  <div class="nav-links">
+    <a href="#first-test">First Test</a>
+    <a href="#more-tests">More Tests</a>
+    <a href="#resize">Resize Test</a>
+  </div>
+  <div class="nav-pages">
+    <a href="index.html" class="nav-page-btn">📹 Video</a>
+    <a href="images.html" class="nav-page-btn nav-page-btn--active">🖼 Images</a>
+  </div>
+</nav>
+<div class="nav-progress" id="navProgress"></div>
+
+<!-- ── HERO ────────────────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-badge">Static Creative Research · 2024</div>
+  <h1 class="hero-title">AI Image<br><span>Generation Report</span></h1>
+  <p class="hero-sub">Testing which AI models generate the best static UGC creatives — text quality, layout, and format adaptability</p>
+  <div class="hero-tags">
+    <span class="hero-tag">NanoBanana Pro</span>
+    <span class="hero-tag">NanoBanana 2</span>
+    <span class="hero-tag">GPT-4o Image</span>
+    <span class="hero-tag">Recraft v4 Pro</span>
+    <span class="hero-tag">Grok</span>
+    <span class="hero-tag">Qwen</span>
+    <span class="hero-tag">Seedream 4K</span>
+  </div>
+</section>
+
+<!-- ── SECTION 1: First Iteration ──────────────────────────────────────────── -->
+<section id="first-test" class="section section--dark">
+  <div class="container">
+    <div class="section-label">Step 1</div>
+    <h2 class="fade-up">First Iteration — 7 Models</h2>
+    <p class="section-intro fade-up">
+      The goal was simple: find which AI image generator handles <strong style="color:#fff">on-image text</strong> best.
+      One prompt, seven models, no post-processing. The scene — a person sitting alone in an empty room —
+      was chosen to test both visual storytelling and typographic clarity simultaneously.
+    </p>
+
+    <div class="prompt-block fade-up">
+      <div class="prompt-label">Prompt used across all models</div>
+      <div class="prompt-text">A lonely young adult sitting on the floor in the corner of a large empty room, knees pulled to chest.
+Blurred silhouettes of people pass outside a glass wall, ignoring the character.
+Mood: emotional isolation, feeling unseen.
+
+TEXT (must be large, clean, high contrast, fully readable, centered top-to-middle layout):
+This will hurt, are you ready?
+You feel invisible. Like you could disappear and no one would even notice.
+It's not just loneliness. It's being alone in a crowd. Alone in your feelings. Alone in your opinions.
+Maybe you learned early on that no one was really listening. You had to handle it all yourself.
+And now you're still waiting for someone to actually see you.
+
+There is an app called Voiced, where you can talk things through and actually reflect.
+It's private, judgment-free, and the AI actually helps you spot the patterns, makes you reflect.
+Basically a journal that writes back.
+This is probably the best tool for self-reflection on the market.
+Tap on the screen if you are ready to try.
+
+Typography: bold headline, clean sans-serif, strong hierarchy, paragraph readable.
+Leave visual in lower 30–40% of frame. No logos, no UI, no watermark.</div>
+    </div>
+
+    <div class="img-grid img-grid--7 fade-up">
+      <!-- nano-banana-pro -->
+      <div class="img-card">
+        <div class="img-wrap img-wrap--winner-primary">
+          <span class="img-winner-badge img-winner-badge--primary">Winner</span>
+          <img src="img_report/first%20iteration/nano-banana-pro.png" alt="NanoBanana Pro" loading="lazy">
+        </div>
+        <div class="img-model-label winner">NanoBanana Pro</div>
+      </div>
+      <!-- nano-banana-2 -->
+      <div class="img-card">
+        <div class="img-wrap img-wrap--winner-primary">
+          <span class="img-winner-badge img-winner-badge--primary">Winner</span>
+          <img src="img_report/first%20iteration/nano-banana-2.png" alt="NanoBanana 2" loading="lazy">
+        </div>
+        <div class="img-model-label winner">NanoBanana 2</div>
+      </div>
+      <!-- gpt-2 -->
+      <div class="img-card">
+        <div class="img-wrap img-wrap--winner-secondary">
+          <span class="img-winner-badge img-winner-badge--secondary">Winner</span>
+          <img src="img_report/first%20iteration/gpt-2.png" alt="GPT-4o Image" loading="lazy">
+        </div>
+        <div class="img-model-label winner-2">GPT-4o Image</div>
+      </div>
+      <!-- recraft -->
+      <div class="img-card">
+        <div class="img-wrap">
+          <img src="img_report/first%20iteration/recraft-v4-pro.png" alt="Recraft v4 Pro" loading="lazy">
+        </div>
+        <div class="img-model-label">Recraft v4 Pro</div>
+      </div>
+      <!-- grok -->
+      <div class="img-card">
+        <div class="img-wrap">
+          <img src="img_report/first%20iteration/grok.jpeg" alt="Grok" loading="lazy">
+        </div>
+        <div class="img-model-label">Grok</div>
+      </div>
+      <!-- qwen -->
+      <div class="img-card">
+        <div class="img-wrap">
+          <img src="img_report/first%20iteration/qwen.png" alt="Qwen" loading="lazy">
+        </div>
+        <div class="img-model-label">Qwen</div>
+      </div>
+      <!-- seedream -->
+      <div class="img-card">
+        <div class="img-wrap">
+          <img src="img_report/first%20iteration/seedream-4k.jpeg" alt="Seedream 4K" loading="lazy">
+        </div>
+        <div class="img-model-label">Seedream 4K</div>
+      </div>
+    </div>
+
+    <div class="verdict-box verdict-box--primary fade-up">
+      <div class="verdict-icon">🏆</div>
+      <div class="verdict-body">
+        <strong>Winners: NanoBanana Pro, NanoBanana 2, GPT-4o Image</strong>
+        <p>All three handled on-image text with clean hierarchy and legible typography.
+           The remaining four models either broke the text rendering, ignored layout instructions,
+           or produced unreadable body copy. These three models moved on to further testing.</p>
+      </div>
+    </div>
+    <div class="winners-row">
+      <span class="winner-chip winner-chip--primary">✓ NanoBanana Pro</span>
+      <span class="winner-chip winner-chip--primary">✓ NanoBanana 2</span>
+      <span class="winner-chip winner-chip--secondary">✓ GPT-4o Image</span>
+      <span class="winner-chip winner-chip--warning">✗ Recraft v4 Pro</span>
+      <span class="winner-chip winner-chip--warning">✗ Grok</span>
+      <span class="winner-chip winner-chip--warning">✗ Qwen</span>
+      <span class="winner-chip winner-chip--warning">✗ Seedream 4K</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 2: More Tests ────────────────────────────────────────────────── -->
+<section id="more-tests" class="section section--light">
+  <div class="container">
+    <div class="section-label">Step 2</div>
+    <h2 class="fade-up" style="color:var(--text-dark)">More Tests — 3 Prompts × 3 Models</h2>
+    <p class="section-intro fade-up">
+      Three new scenarios pushed the winning models harder: different emotional themes, more complex copy,
+      varying typography instructions. The goal was to find consistent patterns — which model stays reliable
+      across briefs, and which produces more creatively varied layouts.
+    </p>
+
+    <!-- Test 1 -->
+    <div class="test-group fade-up">
+      <div class="test-group-title">Test 2 — Relationship pain / emotional neglect</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt</div>
+        <div class="prompt-text">A woman sitting on a bed at night holding a glowing phone, empty space beside her.
+Mood: emotional neglect, relationship pain.
+
+TEXT:
+This will hurt, are you ready?
+His actions don't match his words. You're tired of the same issues over and over again.
+It's never just a conflict. You are begging for attention. Begging to be loved. Feeling like you're second best.
+Maybe you learned early on that your needs didn't matter. You had to stay quiet to keep the peace.
+And now you're giving chances to those who won't change.
+
+There is an app called Voiced, where you can talk things through and actually reflect.
+It's private, judgment-free, and the AI actually helps you spot the patterns, makes you reflect.
+Basically a journal that writes back.
+This is probably the best tool for self-reflection on the market.
+Tap on the screen if you are ready to try.
+
+Typography: emotional headline, readable paragraphs, high contrast.</div>
+      </div>
+      <div class="img-grid img-grid--3">
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/1/nano-banana-pro.png" alt="NanoBanana Pro" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">NanoBanana Pro</div>
+        </div>
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/1/nano-banana-2.png" alt="NanoBanana 2" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">NanoBanana 2</div>
+        </div>
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/1/gpt-2.png" alt="GPT-4o Image" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">GPT-4o Image</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Test 2 -->
+    <div class="test-group fade-up">
+      <div class="test-group-title">Test 3 — Overthinking / mental overload</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt</div>
+        <div class="prompt-text">A person sitting at a desk at night surrounded by floating notes and chaotic thoughts.
+Mood: overthinking, mental overload.
+
+TEXT:
+This will hurt, are you ready?
+There's a constant stream of worry in your head that you can't turn off. You replay everything over and over.
+It's not just stress. It's overthinking every word you said. Carrying shame you can't let go of.
+Maybe you learned early on that you had to control everything. Anticipate every problem.
+And now your brain won't stop, even when you're trying to rest.
+
+There is an app called Voiced, where you can talk things through and actually reflect.
+It's private, judgment-free, and the AI actually helps you spot the patterns, makes you reflect.
+Basically a journal that writes back.
+This is probably the best tool for overthinkers on the market.
+Tap on the screen if you are ready to try.
+
+Typography: dense but structured, clean hierarchy, readable spacing.</div>
+      </div>
+      <div class="img-grid img-grid--3">
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/2/nano-banana-pro.png" alt="NanoBanana Pro" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">NanoBanana Pro</div>
+        </div>
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/2/nano-banana-2.png" alt="NanoBanana 2" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">NanoBanana 2</div>
+        </div>
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/2/gpt-2.png" alt="GPT-4o Image" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">GPT-4o Image</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Test 3 -->
+    <div class="test-group fade-up">
+      <div class="test-group-title">Test 4 — Emotional confusion / childhood patterns</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt</div>
+        <div class="prompt-text">A person standing in fog, partially obscured, with faint childhood silhouettes behind.
+Mood: emotional confusion, lack of clarity.
+
+TEXT:
+This will hurt, are you ready?
+The reason why you fail to express or identify your emotions
+is that honesty wasn't safe when you were a child.
+
+There is an app called Voiced, where you can talk things through and actually reflect.
+It's private, judgment-free, and the AI actually helps you spot the patterns, makes you reflect.
+Basically, a journaling companion that writes back.
+This is probably the best tool for clarity on the market.
+Tap on the screen if you are ready to try.
+
+Typography: more minimal, larger spacing, fewer lines per block.</div>
+      </div>
+      <div class="img-grid img-grid--3">
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/3/nano-banana-pro.png" alt="NanoBanana Pro" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">NanoBanana Pro</div>
+        </div>
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/3/nano-banana-2.png" alt="NanoBanana 2" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">NanoBanana 2</div>
+        </div>
+        <div class="img-card">
+          <div class="img-wrap">
+            <img src="img_report/more%20tests/3/gpt-2.png" alt="GPT-4o Image" loading="lazy">
+          </div>
+          <div class="img-model-label" style="color:#6B6F88">GPT-4o Image</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-box verdict-box--primary fade-up">
+      <div class="verdict-icon">💡</div>
+      <div class="verdict-body">
+        <strong>Verdict: Both NanoBanana and GPT handle text reliably — but GPT thinks in layouts</strong>
+        <p>NanoBanana Pro and NanoBanana 2 produce consistently clean, legible text with correct hierarchy
+           across all prompts. GPT-4o Image matches them on text quality but goes further —
+           it experiments with visual composition, text positioning, and typographic rhythm in ways the
+           NanoBanana models don't attempt. If consistency is the priority, choose NanoBanana.
+           If creative layout variety matters, GPT wins.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 3: Resize Test ───────────────────────────────────────────────── -->
+<section id="resize" class="section section--dark">
+  <div class="container">
+    <div class="section-label">Step 3</div>
+    <h2 class="fade-up">Resize Test — 4×5 → 9×16</h2>
+    <p class="section-intro fade-up">
+      UGC creatives live in a 9:16 world, but generating directly in 9:16 often breaks layout.
+      The more reliable pipeline: generate at 4:5, then expand to 9:16 using an outpainting tool.
+      We tested three models plus Freepik's built-in expand tool to see which handles
+      the format shift without distorting the subject or losing text legibility.
+    </p>
+
+    <!-- Resize group 1 -->
+    <div class="test-group fade-up">
+      <div class="test-group-title">Resize attempt 1 — AI model outpainting</div>
+      <div class="resize-grid">
+        <div class="resize-card">
+          <div class="resize-wrap">
+            <img src="img_report/resize%20test/1/nano-banana-pro.png" alt="NanoBanana Pro resize" loading="lazy">
+          </div>
+          <div class="resize-label">NanoBanana Pro</div>
+        </div>
+        <div class="resize-card">
+          <div class="resize-wrap">
+            <img src="img_report/resize%20test/1/nano-banana-2.png" alt="NanoBanana 2 resize" loading="lazy">
+          </div>
+          <div class="resize-label">NanoBanana 2</div>
+        </div>
+        <div class="resize-card">
+          <div class="resize-wrap">
+            <img src="img_report/resize%20test/1/gpt-2.png" alt="GPT-4o Image resize" loading="lazy">
+          </div>
+          <div class="resize-label">GPT-4o Image</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Resize group 2 -->
+    <div class="test-group fade-up">
+      <div class="test-group-title">Resize attempt 2 — AI model outpainting (second round)</div>
+      <div class="resize-grid">
+        <div class="resize-card">
+          <div class="resize-wrap">
+            <img src="img_report/resize%20test/2/nano-banana-pro.png" alt="NanoBanana Pro resize 2" loading="lazy">
+          </div>
+          <div class="resize-label">NanoBanana Pro</div>
+        </div>
+        <div class="resize-card">
+          <div class="resize-wrap">
+            <img src="img_report/resize%20test/2/nano-banana-2.png" alt="NanoBanana 2 resize 2" loading="lazy">
+          </div>
+          <div class="resize-label">NanoBanana 2</div>
+        </div>
+        <div class="resize-card">
+          <div class="resize-wrap">
+            <img src="img_report/resize%20test/2/gpt-2.png" alt="GPT-4o Image resize 2" loading="lazy">
+          </div>
+          <div class="resize-label">GPT-4o Image</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Freepik expand winner -->
+    <div class="test-group fade-up">
+      <div class="test-group-title">Freepik Expand — clear winner</div>
+      <div style="display:grid; grid-template-columns: 260px 1fr; gap: 48px; align-items: center;">
+        <div class="resize-card">
+          <div class="resize-wrap resize-wrap--winner">
+            <span class="img-winner-badge img-winner-badge--secondary">Best</span>
+            <img src="img_report/resize%20test/freepik%20expand/freepik_expand.jpeg" alt="Freepik Expand result" loading="lazy">
+          </div>
+          <div class="resize-label winner">Freepik Expand</div>
+        </div>
+        <div>
+          <p style="font-size:1rem; line-height:1.8; color:rgba(255,255,255,.75); margin:0 0 20px">
+            Freepik's native Expand tool outperforms all three AI models on the outpainting task.
+            It preserves the original composition cleanly, adds contextually coherent backgrounds,
+            and most importantly — <strong style="color:#fff">doesn't touch the text area</strong>.
+            The on-image copy stays pixel-perfect while the frame extends naturally.
+          </p>
+          <p style="font-size:1rem; line-height:1.8; color:rgba(255,255,255,.75); margin:0">
+            The AI models (even NanoBanana Pro) hallucinated new elements near the edges,
+            distorted background consistency, and in GPT's case altered lighting conditions
+            in the expanded zones.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-box verdict-box--secondary fade-up">
+      <div class="verdict-icon">✅</div>
+      <div class="verdict-body">
+        <strong>Final pipeline: Generate at 4×5 → Expand with Freepik → Export as 9×16</strong>
+        <p>Freepik Expand is the only tool that reliably handles the aspect ratio shift without
+           introducing artifacts or distorting the subject. For any UGC static creative workflow,
+           this is now the recommended format adaptation step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ───────────────────────────────────────────────────────────────── -->
+<footer>
+  <div style="display:flex; justify-content:center; gap:24px; margin-bottom:16px; flex-wrap:wrap;">
+    <span style="color:var(--primary); font-weight:700;">AI UGC Research</span>
+    <span>NanoBanana Pro · NanoBanana 2 · GPT-4o Image</span>
+    <span>Recraft v4 Pro · Grok · Qwen · Seedream 4K</span>
+  </div>
+  <div>Static Creative Report · 2024</div>
+</footer>
+
+<script>
+// Nav progress bar
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const pct = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
+  document.getElementById('navProgress').style.width = pct + '%';
+});
+
+// Fade-up on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

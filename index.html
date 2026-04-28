@@ -323,6 +323,16 @@ nav {
 }
 .next-item p { font-size: 1rem; color: rgba(255,255,255,.8); line-height: 1.6; }
 
+/* ── Page switcher ──────────────────────────────────────────────────────────── */
+.nav-pages { display: flex; gap: 6px; margin-left: 8px; }
+.nav-page-btn {
+  padding: 5px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700;
+  color: var(--text-muted); border: 1px solid rgba(255,255,255,.12);
+  text-decoration: none; transition: all .2s;
+}
+.nav-page-btn:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+.nav-page-btn--active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
 /* ── Footer ─────────────────────────────────────────────────────────────────── */
 footer {
   background: #080A12; padding: 40px 40px;
@@ -355,6 +365,10 @@ footer {
     <a href="#workflow">Workflow</a>
     <a href="#results">Results</a>
     <a href="#stack">Optimal Stack</a>
+  </div>
+  <div class="nav-pages">
+    <a href="index.html" class="nav-page-btn nav-page-btn--active">📹 Video</a>
+    <a href="images.html" class="nav-page-btn">🖼 Images</a>
   </div>
 </nav>
 <div class="nav-progress" id="navProgress"></div>
